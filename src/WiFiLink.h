@@ -29,10 +29,6 @@ extern "C" {
 	#include "utility/wl_types.h"
 }
 
-#if defined(__AVR_ATmega328P__) && defined(ESP_CH_UART)
-#include "utility/uart/SC16IS750.h"
-#endif
-
 #include "IPAddress.h"
 #include "WiFiClient.h"
 #include "WiFiServer.h"
@@ -47,6 +43,12 @@ public:
     static uint16_t _server_port[MAX_SOCK_NUM];
 
     WiFiClass();
+
+    /*
+     * Optional, to set serial interface like Serial1 od SoftwareSerial.
+     * Default is Serial.
+     */
+    static void init(Stream *serial);
 
     /*
      * Get the first socket available

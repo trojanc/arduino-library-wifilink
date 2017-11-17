@@ -31,18 +31,15 @@
 #define SERIAL_H
 
 #include "Arduino.h"
-#if defined(__AVR_ATmega328P__)
-#include "SC16IS750.h"    //Arduino Uno WiFi developer edition
-#endif
-
-#define Serial SerialWiFi
 
 class WfSerial {
 private:
     int timedRead();
 
+    Stream *espSerial = &Serial;
+
 public:
-    void begin();
+    void init(Stream *serial);
     int read();
     void write(unsigned char c);
     int available();

@@ -31,33 +31,28 @@
 
 unsigned long _startMillis;
 unsigned long _timeout = 3000;  //3 Second Serial Timeout
-bool serial_begin = false;      //check serial begin status
 
-void WfSerial::begin()
+void WfSerial::init(Stream *serial)
 {
-  Serial.begin(ESP_CH_UART_BR);
+  espSerial = serial;
 }
 
 int WfSerial::read()
 {
   int c;
-  c = Serial.read();
+  c = espSerial->read();
   return c;
 }
 
 void WfSerial::write(unsigned char c)
 {
-  if(!serial_begin){
-      begin();    //set in board.txt
-      serial_begin = true;
-  }
-  Serial.write(c);
+  espSerial->write(c);
 }
 
 int WfSerial::available()
 {
   int num;
-  num = Serial.available();
+  num = espSerial->available();
   return num;
 }
 

@@ -19,6 +19,7 @@
 
 #include "utility/wifi_drv.h"
 #include "WiFiLink.h"
+#include <utility/uart/serial.h>
 
 extern "C" {
   #include "utility/wl_definitions.h"
@@ -39,6 +40,11 @@ WiFiClass::WiFiClass()
 void WiFiClass::init()
 {
     WiFiDrv::wifiDriverInit();
+}
+
+void WiFiClass::init(Stream *serial)
+{
+  wfSerial.init(serial);
 }
 
 uint8_t WiFiClass::getSocket()
