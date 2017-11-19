@@ -13,45 +13,41 @@
  This example is written for a network using WPA encryption. For
  WEP or WPA, change the Wifi.begin() call accordingly.
 
- Circuit:
- * Arduino Primo or STAR OTTO or Uno WiFi Developer Edition (with WiFi Link firmware running)
- * LED attached to pin 9
-
  created 25 Nov 2012
  by Tom Igoe
  modified 10 March 2017
  by Sergio Tomasello and Andrea Cannistr√°
+ modified 19 Nov 2017
+ by Juraj Andr·ssy
  */
 
 #include <WiFiLink.h>
+//#include <UnoWiFiDevEdSerial1.h>
 
-char ssid[] = "yourNetwork";      //  your network SSID (name)
-char pass[] = "secretPassword";   // your network password
-int keyIndex = 0;                 // your network key Index number (needed only for WEP)
+#if !defined(ESP_CH_SPI) && !defined(HAVE_HWSERIAL1)
+#include "SoftwareSerial.h"
+SoftwareSerial Serial1(6, 7); // RX, TX
+#endif
 
-int status = WL_IDLE_STATUS;
-WiFiServer server(80);
+WiFiServer server(80); // will stop the Web Panel web server at port 80
 
 void setup() {
   Serial.begin(115200);      // initialize serial communication
   pinMode(9, OUTPUT);      // set the LED pin mode
 
-  //Check if communication with the wifi module has been established
-  if (WiFi.status() == WL_NO_WIFI_MODULE_COMM) {
-    Serial.println("Communication with WiFi module not established.");
-    while (true); // don't continue:
+#if !defined(ESP_CH_SPI)
+  Serial1.begin(9600); // speed must match with BAUDRATE_COMMUNICATION setting in firmware config.h
+//  Serial1.begin(115200);
+//  Serial1.resetESP(); // Uno WiFi Dev Ed
+  WiFi.init(&Serial1);
+#endif
+
+  delay(3000); //wait while WiFiLink firmware connects to WiFi with Web Panel settings
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(10);
   }
 
-  // attempt to connect to Wifi network:
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to Network named: ");
-    Serial.println(ssid);                   // print the network name (SSID);
-
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-    status = WiFi.begin(ssid, pass);
-    // wait 10 seconds for connection:
-    delay(10000);
-  }
   server.begin();                           // start the web server on port 80
   printWifiStatus();                        // you're connected now, so print out the status
 }

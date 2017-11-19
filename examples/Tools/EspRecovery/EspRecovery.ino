@@ -22,8 +22,6 @@
 #if defined(ARDUINO_STM32_STAR_OTTO) // Arduino STAR OTTO
 #define BR 230400
 #define Serial SerialUSB
-#elif defined(ARDUINO_AVR_UNO_WIFI_DEV_ED) // Arduino UNO WiFi Developer Edition
-#define BR 9600
 #endif
 
 #include <WiFiLink.h>

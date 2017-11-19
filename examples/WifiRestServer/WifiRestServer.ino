@@ -20,38 +20,38 @@
  by Andrea Cannistr√°
  modified 10 March 2017
  by Sergio Tomasello
+ modified 19 Nov 2017
+ by Juraj Andr·ssy
  */
 
 #include <WiFiLink.h>
+//#include <UnoWiFiDevEdSerial1.h>
 
-char ssid[] = "yourNetwork";      // your network SSID (name)
-char pass[] = "yourPassword";   // your network password
+#if !defined(ESP_CH_SPI) && !defined(HAVE_HWSERIAL1)
+#include "SoftwareSerial.h"
+SoftwareSerial Serial1(6, 7); // RX, TX
+#endif
 
-int keyIndex = 0;                 // your network key Index number (needed only for WEP)
-
-int status = WL_IDLE_STATUS;
-
-WiFiServer server(80);
+WiFiServer server(80); // will stop the Web Panel web server at port 80
 void setup() {
   Serial.begin(115200);
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
-  //Check if communication with wifi module has been established
-  if (WiFi.status() == WL_NO_WIFI_MODULE_COMM) {
-    Serial.println("Communication with WiFi module not established.");
-    while (true); // don't continue:
+#if !defined(ESP_CH_SPI)
+  Serial1.begin(9600); // speed must match with BAUDRATE_COMMUNICATION setting in firmware config.h
+//  Serial1.begin(115200);
+//  Serial1.resetESP(); // Uno WiFi Dev Ed
+  WiFi.init(&Serial1);
+#endif
+
+  delay(3000); //wait while WiFiLink firmware connects to WiFi with Web Panel settings
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(10);
   }
 
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    status = WiFi.begin(ssid,pass);
-
-    // wait 10 seconds for connection:
-    delay(10000);
-  }
   server.begin();
   // you're connected now, so print out the status:
   printWifiStatus();
@@ -251,7 +251,7 @@ bool listen_service(WiFiClient client, String service){
       if (c == '\n') {
         client.println("HTTP/1.1 200 OK");
         client.println();
-        return 0;         
+        return 0;
       }
       else if (currentLine.endsWith(service+"/")){
         return 1;

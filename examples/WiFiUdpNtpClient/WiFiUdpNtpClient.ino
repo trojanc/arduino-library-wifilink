@@ -13,17 +13,20 @@
  by Tom Igoe
  modified 10 March 2017
  by Sergio Tomasello and Andrea Cannistr√°
+ modified 19 Nov 2017
+ by Juraj Andr·ssy
 
  This code is in the public domain.
  */
 
 #include <WiFiLink.h>
 #include <WiFiUdp.h>
+//#include <UnoWiFiDevEdSerial1.h>
 
-int status = WL_IDLE_STATUS;
-char ssid[] = "mynetwork";  //  your network SSID (name)
-char pass[] = "mypassword";       // your network password
-int keyIndex = 0;            // your network key Index number (needed only for WEP)
+#if !defined(ESP_CH_SPI) && !defined(HAVE_HWSERIAL1)
+#include "SoftwareSerial.h"
+SoftwareSerial Serial1(6, 7); // RX, TX
+#endif
 
 unsigned int localPort = 2390;      // local port to listen for UDP packets
 
@@ -44,21 +47,17 @@ void setup()
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
-  //Check if communication with wifi module has been established
-  if (WiFi.status() == WL_NO_WIFI_MODULE_COMM) {
-    Serial.println("Communication with WiFi module not established.");
-    while (true); // don't continue:
-  }
+#if !defined(ESP_CH_SPI)
+  Serial1.begin(9600); // speed must match with BAUDRATE_COMMUNICATION setting in firmware config.h
+//  Serial1.begin(115200);
+//  Serial1.resetESP(); // Uno WiFi Dev Ed
+  WiFi.init(&Serial1);
+#endif
 
-  // attempt to connect to Wifi network:
-  while ( status != WL_CONNECTED) {
-    Serial.print("Attempting to connect to SSID: ");
-    Serial.println(ssid);
-    // Connect to WPA/WPA2 network. Change this line if using open or WEP network:
-    status = WiFi.begin(ssid, pass);
+  delay(3000); //wait while WiFiLink firmware connects to WiFi with Web Panel settings
 
-    // wait 10 seconds for connection:
-    delay(10000);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(10);
   }
 
   Serial.println("Connected to wifi");

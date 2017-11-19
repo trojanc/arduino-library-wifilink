@@ -1,17 +1,22 @@
 /*
  * This example check if the WiFi Link firmware is updated.
  *
- * Circuit:
- * Arduino Primo or STAR OTTO or Uno WiFi Developer Edition (with WiFi Link firmware running)
- *
  * Created 29 July 2015 by Cristian Maglie
  * This code is in the public domain.
  *
  * Modified and adapted 10 March 2017 by Sergio Tomasello
+ * Modified and adapted 19 Nov 2017 by Juraj Andrássy
  *
  */
 
 #include <WiFiLink.h>
+//#include <UnoWiFiDevEdSerial1.h>
+
+#if !defined(ESP_CH_SPI) && !defined(HAVE_HWSERIAL1)
+#include "SoftwareSerial.h"
+SoftwareSerial Serial1(6, 7); // RX, TX
+#endif
+
 
 void setup() {
   // Initialize serial
@@ -19,6 +24,14 @@ void setup() {
   while (!Serial) {
     ; // wait for serial port to connect. Needed for native USB port only
   }
+
+#if !defined(ESP_CH_SPI)
+  Serial1.begin(9600); // speed must match with BAUDRATE_COMMUNICATION setting in firmware config.h
+//  Serial1.begin(115200);
+//  Serial1.resetESP(); // Uno WiFi Dev Ed
+  WiFi.init(&Serial1);
+#endif
+  delay(500); // let firmware initialize
 
   // Print a welcome message
   Serial.println("WiFi Link firmware check.");

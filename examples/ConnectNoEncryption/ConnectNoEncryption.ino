@@ -4,18 +4,23 @@
  Then it prints the  MAC address of the board,
  the IP address obtained, and other network details.
 
- Circuit:
- * Arduino Primo or STAR OTTO or Uno WiFi Developer Edition (with WiFi Link firmware running)
-
  created 13 July 2010
  by dlf (Metodo2 srl)
  modified 31 May 2012
  by Tom Igoe
  modified 10 March 2017
  by Sergio Tomasello and Andrea Cannistr√°
+ modified 19 Nov 2017
+ by Juraj Andr·ssy
  */
 
 #include <WiFiLink.h>
+//#include <UnoWiFiDevEdSerial1.h>
+
+#if !defined(ESP_CH_SPI) && !defined(HAVE_HWSERIAL1)
+#include "SoftwareSerial.h"
+SoftwareSerial Serial1(6, 7); // RX, TX
+#endif
 
 char ssid[] = "yourNetwork";     // the name of your network
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
@@ -27,6 +32,13 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
+#if !defined(ESP_CH_SPI)
+  Serial1.begin(9600); // speed must match with BAUDRATE_COMMUNICATION setting in firmware config.h
+//  Serial1.begin(115200);
+//  Serial1.resetESP(); // Uno WiFi Dev Ed
+  WiFi.init(&Serial1);
+#endif
+  delay(500); // let firmware initialize
   //Check if communication with the wifi module has been established
   if (WiFi.status() == WL_NO_WIFI_MODULE_COMM) {
     Serial.println("Communication with WiFi module not established.");
