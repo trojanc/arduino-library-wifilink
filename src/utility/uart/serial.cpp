@@ -25,7 +25,7 @@
 //
 //********************************************/
 
-#if defined(ESP_CH_UART)
+#if !defined(ESP_CH_SPI)
 
 #include "serial.h"
 

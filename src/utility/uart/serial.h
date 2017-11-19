@@ -25,7 +25,7 @@
 //
 //********************************************/
 
-#if defined(ESP_CH_UART)
+#if !defined(ESP_CH_SPI)
 
 #ifndef SERIAL_H
 #define SERIAL_H

@@ -29,10 +29,10 @@
 #define COMM_H
 
 //#if defined(__AVR_ATmega32U4__) || defined(ARDUINO_ARCH_STM32F4)
-#if defined(ESP_CH_UART)
+#if !defined(ESP_CH_SPI)
     #include "utility/uart/uart_drv.h"
 	class CommDrv : public UartDrv {};
-#elif defined(ESP_CH_SPI)
+#else
     #include "utility/spi/spi_drv.h"
     class CommDrv : public SpiDrv {};
 #endif
