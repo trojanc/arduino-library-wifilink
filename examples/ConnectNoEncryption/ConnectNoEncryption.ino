@@ -10,12 +10,12 @@
  by Tom Igoe
  modified 10 March 2017
  by Sergio Tomasello and Andrea Cannistr√°
- modified 19 Nov 2017
+ modified Nov 2017
  by Juraj Andr·ssy
  */
 
 #include <WiFiLink.h>
-//#include <UnoWiFiDevEdSerial1.h>
+//#include <UnoWiFiDevEdSerial1.h> // change Serial1.begin to 115200
 
 #if !defined(ESP_CH_SPI) && !defined(HAVE_HWSERIAL1)
 #include "SoftwareSerial.h"
@@ -34,11 +34,12 @@ void setup() {
 
 #if !defined(ESP_CH_SPI)
   Serial1.begin(9600); // speed must match with BAUDRATE_COMMUNICATION setting in firmware config.h
-//  Serial1.begin(115200);
-//  Serial1.resetESP(); // Uno WiFi Dev Ed
   WiFi.init(&Serial1);
 #endif
-  delay(500); // let firmware initialize
+  if (WiFi.checkFirmwareVersion("1.1.0")) {
+    WiFi.resetESP(); // to clear 'sockets' after sketch upload
+    delay(500); // let firmware initialize
+  }
   //Check if communication with the wifi module has been established
   if (WiFi.status() == WL_NO_WIFI_MODULE_COMM) {
     Serial.println("Communication with WiFi module not established.");

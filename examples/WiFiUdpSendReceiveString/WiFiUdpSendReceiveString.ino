@@ -15,7 +15,7 @@
 
 #include <WiFiLink.h>
 #include <WiFiUdp.h>
-//#include <UnoWiFiDevEdSerial1.h>
+//#include <UnoWiFiDevEdSerial1.h> // change Serial1.begin to 115200
 
 #if !defined(ESP_CH_SPI) && !defined(HAVE_HWSERIAL1)
 #include "SoftwareSerial.h"
@@ -38,11 +38,11 @@ void setup() {
 
 #if !defined(ESP_CH_SPI)
   Serial1.begin(9600); // speed must match with BAUDRATE_COMMUNICATION setting in firmware config.h
-//  Serial1.begin(115200);
-//  Serial1.resetESP(); // Uno WiFi Dev Ed
   WiFi.init(&Serial1);
 #endif
-
+  if (WiFi.checkFirmwareVersion("1.1.0")) {
+    WiFi.resetESP(); // to clear 'sockets' after sketch upload
+  }
   delay(3000); //wait while WiFiLink firmware connects to WiFi with Web Panel settings
   while (WiFi.status() != WL_CONNECTED) {
     delay(10);

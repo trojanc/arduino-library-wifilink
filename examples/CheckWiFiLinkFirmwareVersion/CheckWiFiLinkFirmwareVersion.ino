@@ -5,12 +5,12 @@
  * This code is in the public domain.
  *
  * Modified and adapted 10 March 2017 by Sergio Tomasello
- * Modified and adapted 19 Nov 2017 by Juraj Andrássy
+ * Modified and adapted Nov 2017 by Juraj Andrássy
  *
  */
 
 #include <WiFiLink.h>
-//#include <UnoWiFiDevEdSerial1.h>
+//#include <UnoWiFiDevEdSerial1.h> // change Serial1.begin to 115200
 
 #if !defined(ESP_CH_SPI) && !defined(HAVE_HWSERIAL1)
 #include "SoftwareSerial.h"
@@ -27,11 +27,8 @@ void setup() {
 
 #if !defined(ESP_CH_SPI)
   Serial1.begin(9600); // speed must match with BAUDRATE_COMMUNICATION setting in firmware config.h
-//  Serial1.begin(115200);
-//  Serial1.resetESP(); // Uno WiFi Dev Ed
   WiFi.init(&Serial1);
 #endif
-  delay(500); // let firmware initialize
 
   // Print a welcome message
   Serial.println("WiFi Link firmware check.");
