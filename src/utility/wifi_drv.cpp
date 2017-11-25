@@ -26,7 +26,7 @@
 
 #include "utility/wifi_drv.h"
 
-#define _DEBUG_
+//#define _DEBUG_
 
 extern "C" {
 #include "utility/wifi_spi.h"
@@ -99,6 +99,25 @@ void WiFiDrv::getRemoteData(uint8_t sock, uint8_t *ip, uint8_t *port)
 void WiFiDrv::wifiDriverInit()
 {
     commDrv.begin();
+}
+
+void WiFiDrv::resetESP()
+{
+  WAIT_FOR_SLAVE_SELECT();
+
+    // Send Command
+    commDrv.sendCmd(RESET_ESP_CMD, PARAM_NUMS_0);
+
+    //Wait the reply elaboration
+    commDrv.waitForSlaveReady();
+
+    // Wait for reply
+    uint8_t _data = -1;
+    uint8_t _dataLen = 0;
+
+    commDrv.waitResponseCmd(GET_CONN_STATUS_CMD, PARAM_NUMS_1, &_data, &_dataLen);
+
+    commDrv.commSlaveDeselect();
 }
 
 int8_t WiFiDrv::wifiSetNetwork(char* ssid, uint8_t ssid_len)

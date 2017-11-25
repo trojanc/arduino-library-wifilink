@@ -56,6 +56,12 @@ public:
     static uint8_t getSocket();
 
     /*
+     * command firmware to reset ESP
+     * from firmware 1.1.0
+     */
+    static void resetESP();
+
+    /*
      * Get firmware version
      */
     static char* firmwareVersion();

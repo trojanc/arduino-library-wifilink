@@ -59,6 +59,11 @@ uint8_t WiFiClass::getSocket()
     return NO_SOCKET_AVAIL;
 }
 
+void WiFiClass::resetESP()
+{
+  WiFiDrv::resetESP();
+}
+
 char* WiFiClass::firmwareVersion()
 {
 	return WiFiDrv::getFwVersion();

@@ -73,6 +73,12 @@ public:
     static void wifiDriverInit();
 
     /*
+     * command firmware to reset ESP
+     * from firmware 1.1.0
+     */
+    static void resetESP();
+
+    /*
      * Set the desired network which the connection manager should try to
      * connect to.
      *
