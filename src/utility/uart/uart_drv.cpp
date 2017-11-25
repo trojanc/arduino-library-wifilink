@@ -22,7 +22,7 @@
 #include "uart_drv.h"
 #include "serial.h"
 // #include "pins_arduino.h"
-#define _DEBUG_
+//#define _DEBUG_
 extern "C" {
 #include "utility/debug.h"
 }
