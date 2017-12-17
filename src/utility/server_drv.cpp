@@ -193,8 +193,12 @@ bool ServerDrv::getDataBuf(uint8_t sock, uint8_t *_data, uint16_t *_dataLen)
 {
 	WAIT_FOR_SLAVE_SELECT();
     // Send Command
-    commDrv.sendCmd(GET_DATABUF_TCP_CMD, PARAM_NUMS_1);
-    commDrv.sendBuffer(&sock, sizeof(sock), LAST_PARAM);
+    commDrv.sendCmd(GET_DATABUF_TCP_CMD, PARAM_NUMS_2);
+    commDrv.sendBuffer(&sock, sizeof(sock));
+    uint8_t tmp[2];
+    tmp[0] = (*_dataLen) >> 8;
+    tmp[1] = (*_dataLen) & 0x00FF;
+    commDrv.sendBuffer(tmp, (uint16_t) 2, LAST_PARAM);
 
     //Wait the reply elaboration
     commDrv.waitForSlaveReady();
@@ -203,6 +207,7 @@ bool ServerDrv::getDataBuf(uint8_t sock, uint8_t *_data, uint16_t *_dataLen)
     if (!commDrv.waitResponseData16(GET_DATABUF_TCP_CMD, _data, _dataLen))
     {
         WARN("error waitResponse");
+        (*_dataLen) = 0;
     }
     commDrv.commSlaveDeselect();
     if (*_dataLen!=0)
