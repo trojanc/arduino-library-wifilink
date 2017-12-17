@@ -161,7 +161,11 @@ int WiFiClient::read(uint8_t* buf, size_t size) {
   uint16_t _size = size;
   if (!ServerDrv::getDataBuf(_sock, buf, &_size))
       return -1;
-  return 0;
+  availData -= _size;
+  if (availData < 0) {
+    availData = 0;
+  }
+  return _size;
 }
 
 int WiFiClient::peek() {
