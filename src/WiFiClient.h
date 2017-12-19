@@ -48,6 +48,10 @@ public:
 
   using Print::write;
 
+  virtual int readBytes(uint8_t *buf, size_t size) { // from Stream
+    return read(buf, size);
+  }
+
 private:
   static uint16_t _srcport;
   uint8_t _sock;   //not used
